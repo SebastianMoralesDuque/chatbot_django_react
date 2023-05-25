@@ -1,0 +1,3 @@
+[submodule "chatbot-server/chatbot-app"]
+	path = chatbot-server/chatbot-app
+	url = https://github.com/SebastianMoralesDuque/react_chatbot

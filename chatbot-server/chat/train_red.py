@@ -61,6 +61,10 @@ def train():
     # Entrenar modelo
     modelo.fit(X, Y, epochs=500, batch_size=64, verbose=1)
 
-    #guardar modelo
-    modelo.save('modelo_chatbot_final.h5')
-
+    # Guardar modelo
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    modelo_file_path = os.path.join(current_dir, 'modelo_chatbot_final.h5')
+    if os.path.exists(modelo_file_path):
+        os.remove(modelo_file_path)  # Borrar el modelo anterior
+    modelo.save(modelo_file_path)
+    
