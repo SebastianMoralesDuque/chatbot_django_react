@@ -11,35 +11,6 @@ file_path = os.path.join(os.path.dirname(__file__), 'intents.json')
 file_path2 = os.path.join(os.path.dirname(__file__), 'modelo_chatbot_final.h5')
 
 
-# Cargar datos del archivo JSON
-with open(file_path, encoding='utf-8') as archivo:
-    datos = json.load(archivo)
-
-# Preprocesamiento de los datos
-entrenamiento = []
-clases = []
-documentos = []
-ignorar = ["?", "!", ".", ","]
-
-for intent in datos["intents"]:
-    for patron in intent["patterns"]:
-        # Convertir a minúsculas y eliminar signos de puntuación
-        palabras = [palabra.lower() for palabra in patron.split() if palabra not in ignorar]
-        entrenamiento.append(" ".join(palabras))
-        clases.append(intent["tag"])
-        documentos.append((palabras, intent["tag"]))
-
-# Crear diccionario de palabras
-tokenizer = Tokenizer()
-tokenizer.fit_on_texts(entrenamiento)
-palabras = tokenizer.word_index
-num_palabras = len(palabras) + 1
-
-#cargar modelo
-modelo = tf.keras.models.load_model(file_path2)
-
-
-
 def procesar_entrada(entrada):
     # Eliminar signos de puntuación y tildes
     entrada = entrada.lower()
@@ -50,8 +21,32 @@ def procesar_entrada(entrada):
 last_message = ""
 
 def logic(texto):
+        # Cargar datos del archivo JSON
+    with open(file_path, encoding='utf-8') as archivo:
+        datos = json.load(archivo)
+    modelo = tf.keras.models.load_model(file_path2)
+
+    # Preprocesamiento de los datos
+    entrenamiento = []
+    clases = []
+    documentos = []
+    ignorar = ["?", "!", ".", ","]
+
+    for intent in datos["intents"]:
+        for patron in intent["patterns"]:
+            # Convertir a minúsculas y eliminar signos de puntuación
+            palabras = [palabra.lower() for palabra in patron.split() if palabra not in ignorar]
+            entrenamiento.append(" ".join(palabras))
+            clases.append(intent["tag"])
+            documentos.append((palabras, intent["tag"]))
+
+    # Crear diccionario de palabras
+    tokenizer = Tokenizer()
+    tokenizer.fit_on_texts(entrenamiento)
+    palabras = tokenizer.word_index
+    num_palabras = len(palabras) + 1
+
     global last_message
-    
     # Procesa la entrada del usuario para quitar tildes y signos
     texto = procesar_entrada(texto)
     

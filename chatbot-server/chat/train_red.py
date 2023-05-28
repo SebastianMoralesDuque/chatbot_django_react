@@ -1,13 +1,14 @@
-import time
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.preprocessing.text import Tokenizer
 import os
-file_path = os.path.join(os.path.dirname(__file__), 'intents.json')
 import json
 
+file_path = os.path.join(os.path.dirname(__file__), 'intents.json')
+
+
+
 def train():
-    # Cargar datos del archivo JSON
     with open(file_path, encoding='utf-8') as archivo:
         datos = json.load(archivo)
 
@@ -51,20 +52,23 @@ def train():
     X = np.array(entradas)
     Y = np.array(salidas)
 
+    # Obtener la dimensión de entrada actualizada
+    input_dim = X.shape[1]
+
     # Definir modelo de red neuronal
+    modelo_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'modelo_chatbot_final.h5')
+    if os.path.exists(modelo_file_path):
+        # Eliminar modelo anterior si existe
+        os.remove(modelo_file_path)
+
     modelo = tf.keras.Sequential([
-        tf.keras.layers.Dense(16, input_dim=num_palabras, activation='relu'),
+        tf.keras.layers.Dense(4, input_dim=input_dim, activation='relu'),
         tf.keras.layers.Dense(len(clases), activation='softmax')
     ])
     modelo.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
     # Entrenar modelo
-    modelo.fit(X, Y, epochs=500, batch_size=64, verbose=1)
+    modelo.fit(X, Y, epochs=600, batch_size=64, verbose=1)
 
     # Guardar modelo
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    modelo_file_path = os.path.join(current_dir, 'modelo_chatbot_final.h5')
-    if os.path.exists(modelo_file_path):
-        os.remove(modelo_file_path)  # Borrar el modelo anterior
     modelo.save(modelo_file_path)
-    
