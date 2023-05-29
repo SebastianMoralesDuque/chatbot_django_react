@@ -62,7 +62,7 @@ def train():
         os.remove(modelo_file_path)
 
     modelo = tf.keras.Sequential([
-        tf.keras.layers.Dense(4, input_dim=input_dim, activation='relu'),
+        tf.keras.layers.Dense(128, input_dim=input_dim, activation='relu'),
         tf.keras.layers.Dense(len(clases), activation='softmax')
     ])
     modelo.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
