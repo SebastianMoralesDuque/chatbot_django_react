@@ -1,5 +1,4 @@
 import string
-import time
 import numpy as np
 import tensorflow as tf
 import unicodedata
@@ -93,7 +92,6 @@ def logic(texto):
                         preguntas.extend([procesar_entrada(pattern) for pattern in patterns])
                         respuestas.extend(responses)
             distancias = [Levenshtein.distance(texto.lower(), pregunta.lower()) for pregunta in preguntas]
-            pregunta_similar = preguntas[np.argmin(distancias)]
             respuesta = respuestas[np.argmin(distancias)]
     else:
         respuesta = np.random.choice(responses)
