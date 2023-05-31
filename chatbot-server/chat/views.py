@@ -1,12 +1,12 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import time
 import json
 from django.http import JsonResponse
 from .file_utils import append_qa_pairs
 from .chat_logic import logic
 from .train_red import train
 from .models import Mensaje
+from .serializer import MensajeSerializer
 
 
 
@@ -17,7 +17,6 @@ def process_data(request):
         return JsonResponse({'message': 'Datos procesados correctamente'})
 
     return JsonResponse({'message': 'Método no permitido'})
-
 
 @csrf_exempt
 def send_message(request):
@@ -30,7 +29,10 @@ def send_message(request):
             mensaje = Mensaje(contenido=message)
             mensaje.save()
 
-            return JsonResponse({'message': response})
+            serializer = MensajeSerializer(mensaje)
+            serialized_data = serializer.data
+
+            return JsonResponse({'message': response, 'data': serialized_data})
         except json.JSONDecodeError:
             return JsonResponse({'message': 'Datos JSON inválidos'}, status=400)
     else:
