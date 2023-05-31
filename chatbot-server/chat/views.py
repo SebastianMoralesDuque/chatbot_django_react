@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from .file_utils import append_qa_pairs
 from .chat_logic import logic
 from .train_red import train
+from .models import Mensaje
 
 
 
@@ -26,12 +27,14 @@ def send_message(request):
             message = body.get('message', '')
             response = logic(message)
 
+            mensaje = Mensaje(contenido=message)
+            mensaje.save()
+
             return JsonResponse({'message': response})
         except json.JSONDecodeError:
             return JsonResponse({'message': 'Datos JSON inválidos'}, status=400)
     else:
         return JsonResponse({'message': 'Método no permitido'})
-
 
 @csrf_exempt
 def add_qa_pairs(request):
